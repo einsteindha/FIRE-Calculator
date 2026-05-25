@@ -59,6 +59,13 @@ html,body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans KR'
 .iv.error{color:#D85A30}
 input[type=range]{width:100%;margin-top:3px;accent-color:var(--blue)}
 .ic.error input[type=range]{accent-color:#D85A30}
+/* 슬라이더+숫자 복합 입력 */
+.dual-input{display:flex;align-items:center;gap:6px;margin-top:3px}
+.dual-input input[type=range]{flex:1;margin-top:0}
+.dual-input input[type=number]{width:62px;padding:3px 6px;border:1px solid var(--border2);border-radius:6px;background:var(--bg2);color:var(--text);font-size:13px;font-weight:600;text-align:right;font-family:inherit;-moz-appearance:textfield}
+.dual-input input[type=number]::-webkit-inner-spin-button,
+.dual-input input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none}
+.dual-input input[type=number]:focus{outline:none;border-color:var(--blue)}
 @media(max-width:540px){
   .g-row-2,.g-row-3{grid-template-columns:1fr}
 }
@@ -139,7 +146,7 @@ input[type=range]{width:100%;margin-top:3px;accent-color:var(--blue)}
 
   <div class="fun-notice">
     <span style="font-size:14px;flex-shrink:0;margin-top:1px">💡</span>
-    <span>현재 은퇴 가능 판정은 <strong style="color:var(--text)">투자 수익만으로 생활비를 충당</strong>할 수 있는 시점을 기준으로 합니다. 실제 은퇴 후에는 순자산을 일부 인출해 생활하는 방식이 일반적이므로, 여기서 기간이 길게 나오거나 목표 금액이 크게 보여도 낙담하지 마세요.</span>
+    <span>은퇴 가능 판정은 <strong style="color:var(--text)">투자 수익만으로 생활비를 충당</strong>할 수 있는 시점을 기준으로 합니다. 실제 은퇴 후에는 순자산을 일부 인출해 생활하는 방식이 일반적이므로, 여기서 기간이 길게 나오거나 목표 금액이 크게 보여도 낙담하지 마세요.</span>
   </div>
 
   <div class="disclaimer">
@@ -156,7 +163,7 @@ input[type=range]{width:100%;margin-top:3px;accent-color:var(--blue)}
   <div class="panel active" id="panel0">
 
     <div class="pt">입력 변수</div>
-    <div class="g-row g-row-2">
+    <div class="g-row g-row-3">
       <div class="ic" id="t1_save_ic">
         <div class="il"><span>은퇴준비 저축률</span><span class="iv" id="t1_save_v">30%</span></div>
         <input type="range" min="1" max="98" step="1" value="30" id="t1_save" oninput="calcTab1()">
@@ -164,6 +171,13 @@ input[type=range]{width:100%;margin-top:3px;accent-color:var(--blue)}
       <div class="ic" id="t1_spend_ic">
         <div class="il"><span>소득대비 소비지출률</span><span class="iv" id="t1_spend_v">50%</span></div>
         <input type="range" min="1" max="98" step="1" value="50" id="t1_spendrate" oninput="calcTab1()">
+      </div>
+      <div class="ic">
+        <div class="il"><span>현재 은퇴준비자산 (연소득 대비)</span><span class="iv" id="t1_init_v">0배</span></div>
+        <div class="dual-input">
+          <input type="range" min="0" max="20" step="0.1" value="0" id="t1_init" oninput="syncInit('t1')">
+          <input type="number" min="0" max="50" step="0.1" value="0" id="t1_init_num" oninput="syncInitNum('t1')">
+        </div>
       </div>
     </div>
     <div class="g-row g-row-3">
@@ -229,7 +243,7 @@ input[type=range]{width:100%;margin-top:3px;accent-color:var(--blue)}
   <div class="panel" id="panel1">
 
     <div class="pt">입력 변수</div>
-    <div class="g-row g-row-2">
+    <div class="g-row g-row-3">
       <div class="ic" id="t2_spend_ic">
         <div class="il"><span>소득대비 소비지출률</span><span class="iv" id="t2_spend_v">50%</span></div>
         <input type="range" min="1" max="98" step="1" value="50" id="t2_spendrate" oninput="calcTab2()">
@@ -237,6 +251,13 @@ input[type=range]{width:100%;margin-top:3px;accent-color:var(--blue)}
       <div class="ic">
         <div class="il"><span>목표 은퇴 시기</span><span class="iv" id="t2_yrs_v">20년 후</span></div>
         <input type="range" min="1" max="50" step="1" value="20" id="t2_yrs" oninput="calcTab2()">
+      </div>
+      <div class="ic">
+        <div class="il"><span>현재 은퇴준비자산 (연소득 대비)</span><span class="iv" id="t2_init_v">0배</span></div>
+        <div class="dual-input">
+          <input type="range" min="0" max="20" step="0.1" value="0" id="t2_init" oninput="syncInit('t2')">
+          <input type="number" min="0" max="50" step="0.1" value="0" id="t2_init_num" oninput="syncInitNum('t2')">
+        </div>
       </div>
     </div>
     <div class="g-row g-row-3">
@@ -299,20 +320,21 @@ function switchTab(i) {
 function realReturn(ret, inf) { return (1+ret)/(1+inf) - 1; }
 
 /*
-  simulate(n, saveRate, spendRate, retRate, incRate, infRate)
-  - saveRate  : 은퇴준비 저축률 (0~1)
-  - spendRate : 소득대비 소비지출률 (0~1) — 은퇴 기준 소비
+  simulate(n, saveRate, spendRate, retRate, incRate, infRate, initWealth)
+  - saveRate   : 은퇴준비 저축률 (0~1)
+  - spendRate  : 소득대비 소비지출률 (0~1)
+  - initWealth : 현재 보유 자산 (연소득 대비 배수, 기본 0)
   소득은 1로 정규화. n년 후 실질 자산 & 은퇴에 필요한 자산 반환.
 */
-function simulate(n, saveRate, spendRate, retRate, incRate, infRate) {
-  let wealth = 0, income = 1;
+function simulate(n, saveRate, spendRate, retRate, incRate, infRate, initWealth) {
+  let wealth = (initWealth || 0), income = 1;
   for (let y = 1; y <= n; y++) {
     wealth = wealth * (1+retRate) + income * saveRate;
     income *= (1+incRate);
   }
   const rr = realReturn(retRate, infRate);
   const wReal     = wealth / Math.pow(1+infRate, n);
-  const spendReal = income * spendRate / Math.pow(1+infRate, n); // 소비지출률 기준
+  const spendReal = income * spendRate / Math.pow(1+infRate, n);
   const needed    = rr > 0 ? spendReal / rr : Infinity;
   return { wReal, spendReal, needed };
 }
@@ -354,17 +376,36 @@ function clearSpendCard(cardId, mvId, tagId) {
   document.getElementById(tagId).className   = 'mv-warn-tag';
 }
 
+/* ── 현재 자산 슬라이더 ↔ 숫자 연동 ── */
+function syncInit(tab) {
+  const val = +document.getElementById(tab+'_init').value;
+  const num = document.getElementById(tab+'_init_num');
+  num.value = val.toFixed(1);
+  if (tab === 't1') calcTab1(); else calcTab2();
+}
+function syncInitNum(tab) {
+  const num = document.getElementById(tab+'_init_num');
+  let val = parseFloat(num.value);
+  if (isNaN(val) || val < 0) val = 0;
+  if (val > 50) val = 50;
+  const slider = document.getElementById(tab+'_init');
+  // 슬라이더 범위(0~20) 초과 시 슬라이더는 최대로만 표시
+  slider.value = Math.min(val, 20);
+  if (tab === 't1') calcTab1(); else calcTab2();
+}
+
 /* ══════════════ TAB 1 ══════════════ */
 function calcTab1() {
   const saveRate  = +document.getElementById('t1_save').value;
   const spendRate = +document.getElementById('t1_spendrate').value;
+  const initMult  = Math.max(0, parseFloat(document.getElementById('t1_init_num').value) || 0);
   const retRate   = +document.getElementById('t1_ret').value / 100;
   const incRate   = +document.getElementById('t1_inc').value / 100;
   const infRate   = +document.getElementById('t1_inf').value / 100;
 
   document.getElementById('t1_save_v').textContent  = saveRate + '%';
   document.getElementById('t1_spend_v').textContent = spendRate + '%';
-  document.getElementById('t1_ret_v').textContent   = retRate.toFixed(3)*100>retRate*100 ? (retRate*100).toFixed(1)+'%' : (retRate*100).toFixed(1)+'%';
+  document.getElementById('t1_init_v').textContent  = Number.isInteger(initMult) ? initMult + '배' : initMult.toFixed(1) + '배';
   document.getElementById('t1_ret_v').textContent   = (retRate*100).toFixed(1) + '%';
   document.getElementById('t1_inc_v').textContent   = (incRate*100).toFixed(1) + '%';
   document.getElementById('t1_inf_v').textContent   = (infRate*100).toFixed(1) + '%';
@@ -420,13 +461,13 @@ function calcTab1() {
   const data = [];
 
   for (let y = 1; y <= MAX; y++) {
-    const { wReal, needed } = simulate(y, srFrac, spFrac, retRate, incRate, infRate);
+    const { wReal, needed } = simulate(y, srFrac, spFrac, retRate, incRate, infRate, initMult);
     data.push({ y, wReal, needed });
     if (retireYear === null && wReal >= needed) retireYear = y;
   }
 
   const yr = retireYear || MAX;
-  const { spendReal, needed: neededVal } = simulate(yr, srFrac, spFrac, retRate, incRate, infRate);
+  const { spendReal, needed: neededVal } = simulate(yr, srFrac, spFrac, retRate, incRate, infRate, initMult);
   const spendPct = spendReal * 100;
 
   if (retireYear) {
@@ -481,12 +522,14 @@ function calcTab1() {
 function calcTab2() {
   const spendRate = +document.getElementById('t2_spendrate').value;
   const targetYrs = +document.getElementById('t2_yrs').value;
+  const initMult  = Math.max(0, parseFloat(document.getElementById('t2_init_num').value) || 0);
   const retRate   = +document.getElementById('t2_ret').value / 100;
   const incRate   = +document.getElementById('t2_inc').value / 100;
   const infRate   = +document.getElementById('t2_inf').value / 100;
 
   document.getElementById('t2_spend_v').textContent = spendRate + '%';
   document.getElementById('t2_yrs_v').textContent   = targetYrs + '년 후';
+  document.getElementById('t2_init_v').textContent  = Number.isInteger(initMult) ? initMult + '배' : initMult.toFixed(1) + '배';
   document.getElementById('t2_ret_v').textContent   = (retRate*100).toFixed(1) + '%';
   document.getElementById('t2_inc_v').textContent   = (incRate*100).toFixed(1) + '%';
   document.getElementById('t2_inf_v').textContent   = (infRate*100).toFixed(1) + '%';
@@ -503,7 +546,7 @@ function calcTab2() {
 
   function canRetire(s) {
     if (s <= 0 || s > maxSave) return false;
-    const { wReal, needed } = simulate(targetYrs, s, spFrac, retRate, incRate, infRate);
+    const { wReal, needed } = simulate(targetYrs, s, spFrac, retRate, incRate, infRate, initMult);
     return isFinite(needed) && wReal >= needed;
   }
 
@@ -545,7 +588,7 @@ function calcTab2() {
     document.getElementById('t2_real').textContent   = (rr*100).toFixed(2) + '%';
     warnBox.className = 'warn-box';
     clearSpendCard('t2_spend_card','t2_spend_out','t2_spend_tag');
-    drawTab2Chart(targetYrs, spFrac, retRate, incRate, infRate, rr, null, maxSave);
+    drawTab2Chart(targetYrs, spFrac, retRate, incRate, infRate, rr, null, maxSave, initMult);
     return;
   }
 
@@ -556,7 +599,7 @@ function calcTab2() {
     if (canRetire(mid)) { found = mid; hi = mid; } else lo = mid;
   }
 
-  const { spendReal, needed } = simulate(targetYrs, found, spFrac, retRate, incRate, infRate);
+  const { spendReal, needed } = simulate(targetYrs, found, spFrac, retRate, incRate, infRate, initMult);
   const spendPct = spendReal * 100;
   const restPct  = Math.round(100 - found*100 - spendRate);
 
@@ -574,10 +617,10 @@ function calcTab2() {
   document.getElementById('t2_desc').textContent = targetYrs + '년 후 은퇴를 위한 최소 은퇴준비 저축률';
   warnBox.className = needsWarn ? 'warn-box show' : 'warn-box';
 
-  drawTab2Chart(targetYrs, spFrac, retRate, incRate, infRate, rr, found, maxSave);
+  drawTab2Chart(targetYrs, spFrac, retRate, incRate, infRate, rr, found, maxSave, initMult);
 }
 
-function drawTab2Chart(targetYrs, spFrac, retRate, incRate, infRate, rr, found, maxSave) {
+function drawTab2Chart(targetYrs, spFrac, retRate, incRate, infRate, rr, found, maxSave, initMult) {
   const saveSteps = [10, 20, 30, 40, 50, 60, 70, 80];
   const MAX = 100;
 
@@ -585,7 +628,7 @@ function drawTab2Chart(targetYrs, spFrac, retRate, incRate, infRate, rr, found, 
     const sr = s / 100;
     if (rr <= 0 || sr > maxSave) return null;
     for (let y = 1; y <= MAX; y++) {
-      const { wReal, needed } = simulate(y, sr, spFrac, retRate, incRate, infRate);
+      const { wReal, needed } = simulate(y, sr, spFrac, retRate, incRate, infRate, initMult);
       if (isFinite(needed) && wReal >= needed) return y;
     }
     return null;
