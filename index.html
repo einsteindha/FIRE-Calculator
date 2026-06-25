@@ -3,50 +3,49 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>조기 은퇴 준비 계산기 (FIRE)</title>
+<title>조기 은퇴 준비 계산기 (FIRE) | IdentiFi</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" onerror="this.onerror=null;this.src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js'"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;500;600&family=Noto+Sans+KR:wght@300;400;500&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#fff;--bg2:#f5f7fa;--bg3:#eef1f6;
-  --text:#1a1a2e;--text2:#4a5568;--text3:#718096;
-  --border:rgba(0,0,0,.1);--border2:rgba(0,0,0,.18);
-  --radius:8px;--radius-lg:12px;
-  --blue:#378ADD;--green:#1D9E75;--amber:#BA7517;--red:#D85A30;
-}
-@media(prefers-color-scheme:dark){
-  :root{
-    --bg:#1a1b26;--bg2:#24253a;--bg3:#2d2e45;
-    --text:#e8eaf6;--text2:#9fa8c0;--text3:#6b7394;
-    --border:rgba(255,255,255,.08);--border2:rgba(255,255,255,.15);
-  }
+  --bg:#faf8f4;--bg2:#f2efe9;--bg3:#e8e4db;
+  --text:#1a1814;--text2:#3d3a35;--text3:#7a776f;
+  --border:rgba(26,24,20,.1);--border2:rgba(26,24,20,.18);
+  --radius:2px;--radius-lg:4px;
+  --blue:#c4933f;--green:#2a7c6f;--amber:#b86e1a;--red:#943030;
+  --gold:#c4933f;--gold-light:#f0d99a;--gold-pale:#fdf5e0;
+  color-scheme:light;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans KR',sans-serif;background:var(--bg3);color:var(--text);font-size:14px;line-height:1.6}
+html,body{font-family:'Noto Sans KR',system-ui,sans-serif;background:var(--bg3);color:var(--text);font-size:14px;line-height:1.6}
 
 /* ── HEADER ── */
-.header{background:#0D1B3E;color:#fff;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;min-height:56px}
-.header-title{font-size:15px;font-weight:700;color:#E8C97E}
-.header-sub{font-size:11px;color:#B0BAD4;margin-top:1px}
-.header-badge{background:#C9A84C;color:#0D1B3E;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;white-space:nowrap}
+.header{position:sticky;top:0;z-index:100;background:var(--bg);border-bottom:1px solid var(--border2);padding:0 24px;display:flex;align-items:center;height:54px;gap:10px}
+.header-logo{text-decoration:none;color:inherit;display:flex;flex-direction:column;justify-content:center}
+.header-logo-title{font-family:'DM Serif Display',serif;font-size:20px;font-weight:400;line-height:1;color:var(--text)}
+.header-logo-title span{color:var(--gold);font-style:italic}
+.header-logo-sub{font-size:10px;color:var(--text3);margin-top:3px;letter-spacing:.02em}
+.header-badge{margin-left:auto;font-size:10px;color:var(--text3);border:1px solid var(--border2);padding:4px 10px;border-radius:2px;white-space:nowrap;letter-spacing:.04em}
 
 /* ── LAYOUT ── */
 .wrap{max-width:820px;margin:0 auto;padding:20px 16px 60px}
 
 /* ── DISCLAIMER ── */
-.disclaimer{display:flex;align-items:flex-start;gap:8px;background:var(--bg);border:1px solid var(--border);border-left:3px solid #BA7517;border-radius:var(--radius-lg);padding:10px 13px;margin-bottom:10px;font-size:12px;color:var(--text2);line-height:1.6}
-.fun-notice{display:flex;align-items:flex-start;gap:8px;background:var(--bg);border:1px solid var(--border);border-left:3px solid #BA7517;border-radius:var(--radius-lg);padding:10px 13px;margin-bottom:10px;font-size:12px;color:var(--text2);line-height:1.6}
+.disclaimer{display:flex;align-items:flex-start;gap:8px;background:var(--bg);border:1px solid var(--border);border-left:3px solid var(--amber);border-radius:var(--radius-lg);padding:10px 13px;margin-bottom:10px;font-size:12px;color:var(--text2);line-height:1.6}
+.fun-notice{display:flex;align-items:flex-start;gap:8px;background:var(--bg);border:1px solid var(--border);border-left:3px solid var(--amber);border-radius:var(--radius-lg);padding:10px 13px;margin-bottom:10px;font-size:12px;color:var(--text2);line-height:1.6}
 
 /* ── TABS ── */
 .tabs{display:flex;gap:8px;margin-bottom:18px}
-.tab{flex:1;padding:12px 10px 10px;font-size:13px;font-weight:600;border:2px solid var(--border2);border-radius:var(--radius-lg);background:var(--bg);color:var(--text3);cursor:pointer;text-align:center;transition:all .2s;font-family:inherit;line-height:1.5}
-.tab:hover:not(.active){border-color:var(--blue);color:var(--text)}
-.tab.active{background:#0D1B3E;color:#E8C97E;border-color:#0D1B3E;box-shadow:0 4px 14px rgba(13,27,62,0.28)}
+.tab{flex:1;padding:12px 10px 10px;font-size:13px;font-weight:600;border:1px solid var(--border2);border-radius:var(--radius-lg);background:var(--bg);color:var(--text3);cursor:pointer;text-align:center;transition:all .2s;font-family:'Noto Sans KR',inherit;line-height:1.5}
+.tab:hover:not(.active){border-color:var(--gold);color:var(--text)}
+.tab.active{background:var(--gold-pale);color:var(--text);border-color:var(--gold);box-shadow:0 2px 8px rgba(196,147,63,.15)}
 .tab-icon{display:block;font-size:20px;margin-bottom:3px}
 .panel{display:none}
 .panel.active{display:block}
 
 /* ── SECTION HEADING ── */
-.pt{font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--text3);margin-bottom:10px;padding-bottom:5px;border-bottom:1px solid var(--border)}
+.pt{font-family:'Noto Serif KR',serif;font-size:11px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--text3);margin-bottom:10px;padding-bottom:5px;border-bottom:1px solid var(--border)}
 
 /* ── INPUT GRID ── */
 .g-row{display:grid;gap:10px;margin-bottom:10px}
@@ -54,89 +53,89 @@ html,body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans KR'
 .g-row-3{grid-template-columns:1fr 1fr 1fr}
 .g-row:last-of-type{margin-bottom:6px}
 .ic{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-lg);padding:11px 13px;transition:border-color .2s}
-.ic.error{border-color:#D85A30;background:#FEF2EE}
+.ic.error{border-color:var(--red);background:#fdf0f0}
 .il{font-size:12px;color:var(--text2);margin-bottom:6px;display:flex;justify-content:space-between;align-items:baseline}
-.iv{font-size:13px;font-weight:600;color:var(--text)}
-.iv.error{color:#D85A30}
-input[type=range]{width:100%;margin-top:3px;accent-color:var(--blue)}
-.ic.error input[type=range]{accent-color:#D85A30}
+.iv{font-size:13px;font-weight:600;color:var(--gold)}
+.iv.error{color:var(--red)}
+input[type=range]{width:100%;margin-top:3px;accent-color:var(--gold)}
+.ic.error input[type=range]{accent-color:var(--red)}
 /* 슬라이더+숫자 복합 입력 */
 .dual-input{display:flex;align-items:center;gap:6px;margin-top:3px}
 .dual-input input[type=range]{flex:1;margin-top:0}
-.dual-input input[type=number]{width:62px;padding:3px 6px;border:1px solid var(--border2);border-radius:6px;background:var(--bg2);color:var(--text);font-size:13px;font-weight:600;text-align:right;font-family:inherit;-moz-appearance:textfield}
+.dual-input input[type=number]{width:62px;padding:3px 6px;border:1px solid var(--border2);border-radius:var(--radius);background:var(--bg2);color:var(--text);font-size:13px;font-weight:600;text-align:right;font-family:inherit;-moz-appearance:textfield}
 .dual-input input[type=number]::-webkit-inner-spin-button,
 .dual-input input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none}
-.dual-input input[type=number]:focus{outline:none;border-color:var(--blue)}
+.dual-input input[type=number]:focus{outline:none;border-color:var(--gold)}
 @media(max-width:540px){
   .g-row-2,.g-row-3{grid-template-columns:1fr}
 }
 
 /* ── INPUT TOTAL BAR ── */
 .total-bar{display:flex;align-items:center;gap:8px;margin-bottom:16px;padding:8px 12px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-lg);font-size:12px;transition:border-color .2s,background .2s}
-.total-bar.ok{border-color:var(--green);background:#F0FAF6}
-.total-bar.over{border-color:#D85A30;background:#FEF2EE}
+.total-bar.ok{border-color:var(--green);background:#f0f7f5}
+.total-bar.over{border-color:var(--red);background:#fdf0f0}
 .total-bar-track{flex:1;height:6px;background:var(--bg3);border-radius:3px;overflow:hidden}
 .total-bar-fill{height:100%;border-radius:3px;transition:width .2s,background .2s}
 .total-bar-label{font-size:12px;font-weight:600;white-space:nowrap}
-.total-bar-label.ok{color:#0F6E56}
-.total-bar-label.over{color:#D85A30}
+.total-bar-label.ok{color:var(--green)}
+.total-bar-label.over{color:var(--red)}
 .total-bar-msg{font-size:11px;color:var(--text3)}
-.total-bar-msg.over{color:#D85A30}
+.total-bar-msg.over{color:var(--red)}
 
 /* ── RESULT BOX ── */
 .result-wrap{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px 18px;margin-bottom:14px}
 .result-main-row{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:4px}
-.result-num{font-size:38px;font-weight:700;line-height:1;color:#185FA5}
-.result-num.warn{color:#BA7517}
-.result-num.danger{color:#D85A30}
+.result-num{font-family:'DM Serif Display',serif;font-size:42px;font-weight:400;line-height:1;color:var(--green)}
+.result-num.warn{color:var(--amber)}
+.result-num.danger{color:var(--red)}
 .result-label{font-size:14px;color:var(--text2)}
-.warn-box{background:#FFF3CD;border:1px solid #BA7517;border-radius:var(--radius);padding:8px 12px;margin-top:10px;font-size:12px;color:#7A5800;line-height:1.6;display:none}
+.warn-box{background:var(--gold-pale);border:1px solid var(--gold-light);border-radius:var(--radius);padding:8px 12px;margin-top:10px;font-size:12px;color:var(--amber);line-height:1.6;display:none}
 .warn-box.show{display:block}
-.err-box{background:#FEF2EE;border:1px solid #D85A30;border-radius:var(--radius);padding:8px 12px;margin-top:0;font-size:12px;color:#7A1F1F;line-height:1.6;display:none;margin-bottom:14px}
+.err-box{background:#fdf0f0;border:1px solid var(--red);border-radius:var(--radius);padding:8px 12px;margin-top:0;font-size:12px;color:var(--red);line-height:1.6;display:none;margin-bottom:14px}
 .err-box.show{display:block}
 
 /* ── METRIC CARDS ── */
 .rb{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:14px}
 .mv-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-lg);padding:10px 12px;transition:background .2s,border-color .2s}
-.mv-card.warn{background:#FFF8E6;border-color:#BA7517}
-.mv-card.danger{background:#FEF2EE;border-color:#D85A30}
+.mv-card.warn{background:var(--gold-pale);border-color:var(--gold-light)}
+.mv-card.danger{background:#fdf0f0;border-color:var(--red)}
 .mv-label{font-size:11px;color:var(--text2);margin-bottom:3px;line-height:1.4}
 .mv{font-size:15px;font-weight:600;color:var(--text)}
-.mv.warn{color:#BA7517}
-.mv.danger{color:#D85A30}
-.mv-warn-tag{display:none;font-size:10px;font-weight:600;color:#BA7517;margin-top:3px}
+.mv.warn{color:var(--amber)}
+.mv.danger{color:var(--red)}
+.mv-warn-tag{display:none;font-size:10px;font-weight:600;color:var(--amber);margin-top:3px}
 .mv-warn-tag.show{display:block}
 
 /* ── CHART ── */
 .chart-legend{display:flex;gap:14px;font-size:12px;color:var(--text2);margin-bottom:7px;flex-wrap:wrap}
 .li{display:flex;align-items:center;gap:5px}
 .ld{width:14px;height:2px;display:inline-block}
-.ld.dash{border-top:2px dashed #D85A30;height:0}
+.ld.dash{border-top:2px dashed var(--red);height:0}
 .chart-wrap{position:relative;width:100%;height:230px}
 
 /* ── NOTE ── */
 .sn{font-size:11px;color:var(--text3);margin-top:12px;line-height:1.7;padding:8px 10px;background:var(--bg2);border-radius:var(--radius)}
 
 /* ── IMPOSSIBLE BADGE ── */
-.badge-imp{display:none;background:#FAECE7;color:#993C1D;font-size:12px;font-weight:600;padding:5px 12px;border-radius:var(--radius);margin-bottom:10px;border:1px solid #D85A30}
+.badge-imp{display:none;background:#fdf0f0;color:var(--red);font-size:12px;font-weight:600;padding:5px 12px;border-radius:var(--radius);margin-bottom:10px;border:1px solid var(--red)}
 .badge-imp.show{display:inline-block}
 
 @media(max-width:640px){
   .rb{grid-template-columns:repeat(2,1fr)}
   .mv{font-size:14px}
-  .result-num{font-size:30px}
+  .result-num{font-size:32px}
 }
 </style>
 </head>
 <body>
 
-<div class="header">
-  <div>
-    <div class="header-title">조기 은퇴 준비 계산기</div>
-    <div class="header-sub">은퇴 준비 자산 기준 FIRE 시뮬레이터</div>
-  </div>
-  <div class="header-badge">FIRE 준비</div>
-</div>
+<header class="header">
+  <a href="https://identifi.co.kr" target="_blank" rel="noopener" class="header-logo">
+    <div class="header-logo-title">Identi<span>Fi</span></div>
+    <div class="header-logo-sub">조기은퇴 준비 계산기</div>
+  </a>
+  <div class="header-badge">은퇴 준비 자산 기준 FIRE 시뮬레이터</div>
+</header>
 
 <div class="wrap">
 
@@ -227,7 +226,7 @@ input[type=range]{width:100%;margin-top:3px;accent-color:var(--blue)}
     </div>
 
     <div class="chart-legend">
-      <span class="li"><span class="ld" style="background:#185FA5;"></span>실질 자산</span>
+      <span class="li"><span class="ld" style="background:#2a7c6f;"></span>실질 자산</span>
       <span class="li"><span class="ld dash"></span>은퇴 가능 기준선 (필요 자산)</span>
     </div>
     <div class="chart-wrap"><canvas id="chart1"></canvas></div>
@@ -296,9 +295,9 @@ input[type=range]{width:100%;margin-top:3px;accent-color:var(--blue)}
     </div>
 
     <div class="chart-legend">
-      <span class="li"><span class="ld" style="background:#185FA5;height:8px;border-radius:2px;width:10px;"></span>목표 기간 내 달성 가능</span>
-      <span class="li"><span class="ld" style="background:rgba(24,95,165,0.2);height:8px;border-radius:2px;width:10px;"></span>목표 기간 초과 / 불가</span>
-      <span class="li"><span class="ld dash" style="border-color:#D85A30;"></span>목표 기간 기준선</span>
+      <span class="li"><span class="ld" style="background:#2a7c6f;height:8px;border-radius:2px;width:10px;"></span>목표 기간 내 달성 가능</span>
+      <span class="li"><span class="ld" style="background:rgba(42,124,111,0.2);height:8px;border-radius:2px;width:10px;"></span>목표 기간 초과 / 불가</span>
+      <span class="li"><span class="ld dash" style="border-color:#943030;"></span>목표 기간 기준선</span>
     </div>
     <div class="chart-wrap"><canvas id="chart2"></canvas></div>
 
@@ -350,7 +349,7 @@ function renderTotalBar(barId, fillId, labelId, msgId, save, spend) {
   const msg    = document.getElementById(msgId);
   bar.className   = 'total-bar ' + (isOver ? 'over' : 'ok');
   fill.style.width      = Math.min(total, 100) + '%';
-  fill.style.background = isOver ? '#D85A30' : '#1D9E75';
+  fill.style.background = isOver ? '#943030' : '#2a7c6f';
   label.textContent = total + '%';
   label.className   = 'total-bar-label ' + (isOver ? 'over' : 'ok');
   const rest = 100 - total;
@@ -504,8 +503,8 @@ function calcTab1() {
     data: {
       labels,
       datasets: [
-        { label:'실질 자산', data:wData, borderColor:'#185FA5', backgroundColor:'rgba(24,95,165,0.07)', pointRadius:0, tension:0.3, fill:true, borderWidth:2 },
-        { label:'필요 자산', data:nData, borderColor:'#D85A30', borderDash:[5,3], pointRadius:0, tension:0.3, fill:false, borderWidth:1.5 }
+        { label:'실질 자산', data:wData, borderColor:'#2a7c6f', backgroundColor:'rgba(42,124,111,0.07)', pointRadius:0, tension:0.3, fill:true, borderWidth:2 },
+        { label:'필요 자산', data:nData, borderColor:'#943030', borderDash:[5,3], pointRadius:0, tension:0.3, fill:false, borderWidth:1.5 }
       ]
     },
     options: {
@@ -635,7 +634,7 @@ function drawTab2Chart(targetYrs, spFrac, retRate, incRate, infRate, rr, found, 
     return null;
   });
 
-  const barColors = retireYears.map(y => (y !== null && y <= targetYrs) ? '#185FA5' : 'rgba(24,95,165,0.22)');
+  const barColors = retireYears.map(y => (y !== null && y <= targetYrs) ? '#2a7c6f' : 'rgba(42,124,111,0.22)');
 
   if (chart2) chart2.destroy();
   chart2 = new Chart(document.getElementById('chart2'), {
@@ -664,9 +663,9 @@ function drawTab2Chart(targetYrs, spFrac, retRate, incRate, infRate, rr, found, 
         const {ctx,chartArea,scales} = chart;
         const yPos = scales.y.getPixelForValue(targetYrs);
         if (yPos < chartArea.top || yPos > chartArea.bottom) return;
-        ctx.save(); ctx.setLineDash([5,3]); ctx.strokeStyle='#D85A30'; ctx.lineWidth=1.5;
+        ctx.save(); ctx.setLineDash([5,3]); ctx.strokeStyle='#943030'; ctx.lineWidth=1.5;
         ctx.beginPath(); ctx.moveTo(chartArea.left,yPos); ctx.lineTo(chartArea.right,yPos); ctx.stroke(); ctx.restore();
-        ctx.save(); ctx.fillStyle='#D85A30'; ctx.font='11px sans-serif';
+        ctx.save(); ctx.fillStyle='#943030'; ctx.font='11px sans-serif';
         ctx.fillText('목표 '+targetYrs+'년', chartArea.right-56, yPos-5); ctx.restore();
       }
     }]
