@@ -21,12 +21,13 @@
 html,body{font-family:'Noto Sans KR',system-ui,sans-serif;background:var(--bg3);color:var(--text);font-size:14px;line-height:1.6}
 
 /* ── HEADER ── */
-.header{position:sticky;top:0;z-index:100;background:var(--bg);border-bottom:1px solid var(--border2);padding:0 24px;display:flex;align-items:center;height:54px;gap:10px}
-.header-logo{text-decoration:none;color:inherit;display:flex;flex-direction:column;justify-content:center}
-.header-logo-title{font-family:'DM Serif Display',serif;font-size:20px;font-weight:400;line-height:1;color:var(--text)}
-.header-logo-title span{color:var(--gold);font-style:italic}
-.header-logo-sub{font-size:10px;color:var(--text3);margin-top:3px;letter-spacing:.02em}
-.header-badge{margin-left:auto;font-size:10px;color:var(--text3);border:1px solid var(--border2);padding:4px 10px;border-radius:2px;white-space:nowrap;letter-spacing:.04em}
+.header{position:sticky;top:0;z-index:100;background:var(--bg);border-bottom:1px solid var(--border2);padding:.9rem 2rem;display:flex;justify-content:space-between;align-items:center}
+.header-left{display:flex;align-items:center;gap:1.25rem}
+.logo{font-family:'DM Serif Display',serif;font-size:18px;color:var(--text);font-weight:400;text-decoration:none}
+.logo span{color:var(--gold);font-style:italic}
+.page-title{font-family:'Noto Serif KR',serif;font-size:1.05rem;font-weight:500;color:var(--text)}
+.page-sub{font-size:.75rem;color:var(--text3)}
+@media(max-width:600px){.header{padding:.75rem 1rem}.page-sub{display:none}}
 
 /* ── LAYOUT ── */
 .wrap{max-width:820px;margin:0 auto;padding:20px 16px 60px}
@@ -130,11 +131,13 @@ input[type=range]{width:100%;margin-top:3px;accent-color:var(--gold)}
 <body>
 
 <header class="header">
-  <a href="https://identifi.co.kr" target="_blank" rel="noopener" class="header-logo">
-    <div class="header-logo-title">Identi<span>Fi</span></div>
-    <div class="header-logo-sub">조기은퇴 준비 계산기</div>
-  </a>
-  <div class="header-badge">은퇴 준비 자산 기준 FIRE 시뮬레이터</div>
+  <div class="header-left">
+    <a href="https://identifi.co.kr" target="_blank" rel="noopener" class="logo">Identi<span>Fi</span></a>
+    <div>
+      <div class="page-title">조기은퇴 준비 계산기</div>
+      <div class="page-sub">은퇴 준비 자산 기준 FIRE 시뮬레이터</div>
+    </div>
+  </div>
 </header>
 
 <div class="wrap">
